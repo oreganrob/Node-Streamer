@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      if ("WebSocket" in window){
+        // Let us open a web socket
+        var ws = new WebSocket("ws://localhost:8080");
+		ws.binaryType = 'arraybuffer';
+		
+		var nextStartTime = 0;
+		var soundBuffer;		
+		node={};					
+		var context = null;
+		
+		/*window.addEventListener('load', init, false);		
+		function init() {
+			try {
+				context = new webkitAudioContext();
+				var source = context.createBufferSource(); // creates a sound source
+				//source.buffer = buffer;                    // tell the source which sound to play
+				source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+			} catch(e) {
+				alert('Web Audio API is not supported in this browser');
+			}
+		}*/        		
+        
+		ws.onmessage = function (evt) {
+			console.log(evt.data.byteLength);
+			console.log(evt.data);	
+			console.log("Type: "+typeof evt.data);
+			
+			var video = document.getElementById('video');
+			video.setAttribute("src", evt.data);			
+			video.load();
+			video.play();
+		};		
+		
+		ws.onclose = function(){ 
+          // websocket is closed.
+          console.log("Connection is closed..."); 
+        };
+      } else {
+        // The browser doesn't support WebSocket
+        console.log("WebSocket NOT supported by your Browser!");
+      }
+    </script>
+	
+	<video id="video" width="320" height="240" controls>	  
+		Your browser does not support the video tag.
+	</video>
+  </body>
+</html>
